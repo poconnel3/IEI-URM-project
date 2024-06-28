@@ -1,5 +1,5 @@
 ## Mount Sinai URM PID project
-## 1/07/2024
+## 6/27/2024
 ## Examining PID/IEI dx in all children in Mount Sinai system to see if there is a racial disparity in rate of diagnosis 
 ## This analysis uses all data sent over from MSDW encompassing every record at MSH and w/ CHD pts as controls. 
 
@@ -58,6 +58,7 @@ table(IEI$Race)
 IEI_2 <- IEI_2 %>% filter(!Race %in% c("Prefer not to say", "PATIENT DECLINED", "UNKNOWN")) #removed 499
 IEI_2 <- IEI_2 %>% filter(!Ethnicity %in% c("PATIENT DECLINED")) #removed 1
 IEI_2 <- IEI_2 %>% filter(!Gender %in% c("Unknown", "Indeterminate")) #removed 3 
+# 27.6% of total pts removed in above 3 steps. 
 unique(IEI_2$Ethnicity)
 table(IEI_2$Ethnicity)
 unique(IEI_2$Gender)
@@ -68,6 +69,7 @@ table(IEI_2$Race_ethnicity_combined)
 CHD_2 <- CHD_2 %>% filter(!Race %in% c("Prefer not to say", "PATIENT DECLINED", "UNKNOWN")) 
 CHD_2 <- CHD_2 %>% filter(!Ethnicity %in% c("PATIENT DECLINED")) 
 CHD_2 <- CHD_2 %>% filter(!Gender %in% c("Unknown")) 
+# 3802 total pts removed in the above 3 steps. 26.6% of starting cohort. 
 unique(CHD_2$Ethnicity)
 table(CHD_2$Ethnicity)
 unique(CHD_2$Gender)
@@ -651,13 +653,26 @@ ggplot(final_IEI_norm, aes(x = dx_age, colour = as.factor(agg_race), label = as.
 ##-------------Plot time to diagnosis by race/ethnicity----------------##
 pp <- ggplot(final_IEI_norm, aes(x = ttd_mo, colour = as.factor(comb_race_eth), label = as.factor(comb_race_eth))) +
   geom_density(size = 1) +
-  theme_classic() + xlim(0,25) +
-  scale_color_manual(values = c("#955251", "#B565A7", "#009B77", "#DD4124", "#EFC050", "#5B5EA6", "#9B2335", "#0a0000", "#858585"))
+  coord_cartesian(xlim=c(0, 8)) +
+  theme_classic() +
+  scale_color_manual(values = c("#955251", "#B565A7", "#009B77", "#DD4124", "#0a0000", "#FDAC53", "#9BB7D4", "#9A8B4F", "#E8A798"))
 
 pp + theme(legend.text = element_text(size = 9),
            legend.title = element_text(size = 12),
            legend.position = c(0.7, 0.5)) +labs(x = "Time to Diagnosis (mo)", y = "Density",
-                                                colour = "Race/Ethnicity") + theme(axis.text = element_text(size = 13))
+                                                colour = "comb_race_eth") + theme(axis.text = element_text(size = 13))
+#above is nice inset
+
+pg <- ggplot(final_IEI_norm, aes(x = ttd_mo, colour = as.factor(comb_race_eth), label = as.factor(comb_race_eth))) +
+  geom_density(size = 1) +
+  coord_cartesian(xlim=c(0, 30)) +
+  theme_classic() +
+  scale_color_manual(values = c("#955251", "#B565A7", "#009B77", "#DD4124", "#0a0000", "#FDAC53", "#9BB7D4", "#9A8B4F", "#E8A798"))
+
+pg + theme(legend.text = element_text(size = 9),
+           legend.title = element_text(size = 12),
+           legend.position = c(0.7, 0.5)) +labs(x = "Time to Diagnosis (mo)", y = "Density",
+                                                colour = "comb_race_eth") + theme(axis.text = element_text(size = 13))
 
 
 #-------------------------------------------------------------------------
